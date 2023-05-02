@@ -15,6 +15,7 @@ use yii\web\IdentityInterface;
  * @property string $username
  * @property string $password_hash
  * @property string $password_reset_token
+ * @property string $access_token
  * @property string $verification_token
  * @property string $email
  * @property string $auth_key
@@ -72,7 +73,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        return self::find()->andWhere(['access_token' => $token])->one();
+        return self::find()->andWhere(['access_token' => $token,  'status' => self::STATUS_ACTIVE])->one();
     }
 
     /**
@@ -187,6 +188,13 @@ class User extends ActiveRecord implements IdentityInterface
         $this->auth_key = Yii::$app->security->generateRandomString();
     }
 
+    /**
+     * Generates "access token"
+     */
+    public function generateAccessToken()
+    {
+        $this->access_token = Yii::$app->security->generateRandomString();
+    }
     /**
      * Generates new password reset token
      */
